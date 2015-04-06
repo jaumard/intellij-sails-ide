@@ -5,8 +5,7 @@ import com.intellij.openapi.util.IconLoader;
 import javax.swing.*;
 
 /**
- * NOTE THIS FILE IS AUTO-GENERATED
- * DO NOT EDIT IT BY HAND, run build/scripts/icons.gant instead
+ * Created by jaumard on 04/04/2015.
  */
 public class SailsJSIcons
 {

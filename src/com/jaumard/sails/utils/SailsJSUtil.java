@@ -20,6 +20,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by jaumard on 04/04/2015.
+ */
 public class SailsJSUtil
 {
 

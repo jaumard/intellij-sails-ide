@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
+/**
+ * Created by jaumard on 04/04/2015.
+ */
 public class SailsJSBundle extends AbstractBundle
 {
 

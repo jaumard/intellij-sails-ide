@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Dennis.Ushakov
+ * Created by jaumard on 04/04/2015.
  */
 public class SailsJSTemplateFactory extends ProjectTemplatesFactory
 {

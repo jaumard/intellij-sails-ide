@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * @author Dennis.Ushakov
+ * Created by jaumard on 04/04/2015.
  */
 public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGenerator.SailsJSProjectSettings> implements DirectoryProjectGenerator<SailsJSProjectGenerator.SailsJSProjectSettings>
 {

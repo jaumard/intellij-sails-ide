@@ -3,6 +3,9 @@ package com.jaumard.sails.ui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Created by jaumard on 04/04/2015.
+ */
 public class JHintTextField extends JTextField
 {
     public JHintTextField(int columns)

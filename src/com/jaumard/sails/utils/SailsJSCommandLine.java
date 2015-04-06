@@ -15,6 +15,9 @@ import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Created by jaumard on 04/04/2015.
+ */
 public class SailsJSCommandLine
 {
     private static final Logger LOGGER = Logger.getInstance(SailsJSCommandLine.class);

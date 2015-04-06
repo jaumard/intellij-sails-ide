@@ -18,6 +18,9 @@ import javax.swing.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * Created by jaumard on 04/04/2015.
+ */
 public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<SailsJSProjectGenerator.SailsJSProjectSettings>
 {
 

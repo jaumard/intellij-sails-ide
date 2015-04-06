@@ -5,7 +5,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Dennis.Ushakov
+ * Created by jaumard on 04/04/2015.
  */
 @State(
         name = "SailsJSConfig",
