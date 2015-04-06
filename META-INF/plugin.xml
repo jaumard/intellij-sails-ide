@@ -1,7 +1,7 @@
-<idea-plugin version="5">
+<idea-plugin version="6">
     <id>com.jaumard.sails</id>
     <name>Sails/Treeline</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <vendor email="jimmy.aumard@gmail.com" url="http://www.sailsjs.org">Jimmy Aumard</vendor>
 
     <description><![CDATA[
@@ -11,6 +11,8 @@
 
     <change-notes><![CDATA[
       BETA test for now
+
+      1.1 -> move template into Node.js and NPM category
     ]]>
     </change-notes>
 

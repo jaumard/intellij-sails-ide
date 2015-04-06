@@ -1,7 +1,6 @@
 package com.jaumard.sails;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.openapi.module.WebModuleBuilder;
 import com.intellij.platform.ProjectTemplate;
 import com.intellij.platform.ProjectTemplatesFactory;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,7 @@ public class SailsJSTemplateFactory extends ProjectTemplatesFactory
     @Override
     public String[] getGroups()
     {
-        return new String[]{WebModuleBuilder.GROUP_NAME};
+        return new String[]{"Node.js and NPM"};
     }
 
 
