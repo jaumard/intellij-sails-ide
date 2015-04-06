@@ -1,0 +1,53 @@
+<idea-plugin version="2">
+    <id>com.jaumard.sails</id>
+    <name>Sails/Treeline</name>
+    <version>1.0</version>
+    <vendor email="jimmy.aumard@gmail.com" url="http://www.sailsjs.org">Jimmy Aumard</vendor>
+
+    <description><![CDATA[
+      Simple plugin to generate/manage a <a href="http://www.sailsjs.org">Sails</a> or <a href="http://treeline.io">Treeline</a> project.<br>
+      Right click on api, models, controllers, adapters folder allow to generate files from IDE
+    ]]></description>
+
+    <change-notes><![CDATA[
+      BETA test for now
+    ]]>
+    </change-notes>
+
+    <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="131"/>
+
+    <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+    <depends>NodeJS</depends>
+    <depends>JavaScript</depends>
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+
+        <codeInsight.template.postfixTemplateProvider language="Sails/Treeline"
+                                                      implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
+
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+        <applicationService serviceInterface="com.jaumard.sails.settings.SailsJSConfig"
+                            serviceImplementation="com.jaumard.sails.settings.SailsJSConfig"/>
+
+        <directoryProjectGenerator implementation="com.jaumard.sails.SailsJSProjectGenerator"/>
+        <projectTemplatesFactory implementation="com.jaumard.sails.SailsJSTemplateFactory"/>
+    </extensions>
+
+
+    <actions>
+        <action id="sails.generate_more" class="com.jaumard.sails.actions.Generate" text="Sails item"
+                icon="/icons/SailsJS.png"
+                description="Generate new Item" keymap="cmd">
+            <add-to-group group-id="NewGroup" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift control alt G"/>
+        </action>
+
+    </actions>
+</idea-plugin>
