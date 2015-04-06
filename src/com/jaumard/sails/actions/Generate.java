@@ -1,18 +1,13 @@
 package com.jaumard.sails.actions;
 
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.IconButton;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jaumard.sails.icons.SailsJSIcons;
 import com.jaumard.sails.settings.SailsJSConfig;
 import com.jaumard.sails.ui.GenerateContentPopup;
@@ -49,8 +44,22 @@ public class Generate extends AnAction implements GenerateContentPopup.GenerateP
             popup = builder.createPopup();
 
             popup.setSize(new Dimension(300, 150));
-            popup.showCenteredInCurrentWindow(currentProject);
+            popup.setRequestFocus(true);
+            popup.addListener(new JBPopupListener()
+            {
+                @Override
+                public void beforeShown(LightweightWindowEvent lightweightWindowEvent)
+                {
+                    generatePopup.setFocus();
+                }
 
+                @Override
+                public void onClosed(LightweightWindowEvent lightweightWindowEvent)
+                {
+
+                }
+            });
+            popup.showCenteredInCurrentWindow(currentProject);
 
             final VirtualFile file = e.getData(PlatformDataKeys.VIRTUAL_FILE);
 
@@ -123,6 +132,13 @@ public class Generate extends AnAction implements GenerateContentPopup.GenerateP
 
 
     @Override
+    public void onError(String error)
+    {
+        Messages.showMessageDialog(currentProject, error, "Error", Messages.getErrorIcon());
+
+    }
+
+    @Override
     public void onCancelClick()
     {
         popup.cancel();
@@ -135,7 +151,7 @@ public class Generate extends AnAction implements GenerateContentPopup.GenerateP
         final String finalGenerate = generatePopup.getItemType();
         final String name = generatePopup.getName();
         final String extras = generatePopup.getExtras();
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable()
+        if (ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable()
         {
             @Override
             public void run()
@@ -144,17 +160,34 @@ public class Generate extends AnAction implements GenerateContentPopup.GenerateP
                 {
                     ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
                     indicator.setText("Creating...");
-                    commandLine.generateNew(finalGenerate, name, extras.split(" "));
-                    FileDocumentManager.getInstance().saveAllDocuments();
-                    VirtualFileManager.getInstance().syncRefresh();
-                    popup.cancel();
+                    String[] extrasArray;
+                    if (extras.isEmpty())
+                    {
+                        extrasArray = null;
+                    }
+                    else
+                    {
+                        extrasArray = extras.split(" ");
+                    }
+                    commandLine.generateNew(finalGenerate, name, extrasArray);
+                    currentProject.getBaseDir().refresh(true, true);
                 }
                 catch (Exception e1)
                 {
+                    ProgressManager.getInstance().getProgressIndicator().cancel();
                     Messages.showMessageDialog(currentProject, "Sorry, an error has occurred : <br/>" + e1.getCause(), "Error", Messages.getErrorIcon());
                     e1.printStackTrace();
                 }
             }
-        }, "Generating " + finalGenerate + " " + name, false, currentProject);
+        }, "Generating " + finalGenerate + " " + name, true, currentProject))
+        {
+            closePopup();
+        }
+    }
+
+    private void closePopup()
+    {
+        popup.cancel();
+        popup.dispose();
     }
 }

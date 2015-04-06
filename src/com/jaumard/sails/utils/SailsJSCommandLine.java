@@ -72,16 +72,17 @@ public class SailsJSCommandLine
 
     public void generateNew(String what, String name, String[] extras) throws Exception
     {
+        if (extras == null)
+        {
+            extras = new String[]{};
+        }
         String[] command = new String[4 + extras.length];
         command[0] = myPath;
         command[1] = "generate";
         command[2] = what;
         command[3] = name;
-        for (int i = 0; i < extras.length; i++)
-        {
-            String extra = extras[i];
-            command[i + 4] = extra;
-        }
+
+        System.arraycopy(extras, 0, command, 4, extras.length);
         executeVoidCommand(command);
     }
 

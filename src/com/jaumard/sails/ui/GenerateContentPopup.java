@@ -7,10 +7,7 @@ import com.jaumard.sails.utils.SpringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 
 /**
  * Created by jaumard on 06/04/2015.
@@ -37,7 +34,7 @@ public class GenerateContentPopup extends JPanel
 
     private void init()
     {
-
+        setFocusable(true);
         add(getForm(), BorderLayout.CENTER);
         add(getButtons(), BorderLayout.SOUTH);
     }
@@ -60,6 +57,8 @@ public class GenerateContentPopup extends JPanel
                 StringUtil.capitalize(SailsJSCommandLine.GENERATE_ADAPTER)
         };
         itemType = new ComboBox(strings, 10);
+        itemType.setFocusable(true);
+        itemType.requestFocus();
         itemType.addItemListener(new ItemListener()
         {
             @Override
@@ -96,12 +95,58 @@ public class GenerateContentPopup extends JPanel
 
         JLabel l2 = new JLabel("Name :", JLabel.TRAILING);
         nameField = new JTextField(10);
+        nameField.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                {
+                    submitForm();
+                }
+            }
+        });
         l.setLabelFor(nameField);
         form.add(l2);
         form.add(nameField);
 
         JLabel l3 = new JLabel("Extra :", JLabel.TRAILING);
         extrasField = new JHintTextField(10);
+        extrasField.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                {
+                    submitForm();
+                }
+            }
+        });
         extrasField.setEnabled(false);
         l.setLabelFor(extrasField);
         form.add(l3);
@@ -121,7 +166,6 @@ public class GenerateContentPopup extends JPanel
 
         JButton cancel = new JButton("Cancel");
         JButton validate = new JButton("Generate");
-
         cancel.addActionListener(new ActionListener()
         {
             @Override
@@ -138,28 +182,56 @@ public class GenerateContentPopup extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (listener == null)
-                {
-                    throw new RuntimeException("GenerateContentPopup need a listener");
-                }
-                else
-                {
-                    if (getName() == null || getName().isEmpty())
-                    {
-
-                    }
-                    else
-                    {
-                        listener.onValidateClick();
-                    }
-                }
+                submitForm();
 
             }
         });
+        validate.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
 
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                {
+                    submitForm();
+                }
+            }
+        });
         buttons.add(cancel);
         buttons.add(validate);
+
         return buttons;
+    }
+
+    private void submitForm()
+    {
+        if (listener == null)
+        {
+            throw new RuntimeException("GenerateContentPopup need a listener");
+        }
+        else
+        {
+            if (getName() == null || getName().isEmpty())
+            {
+                listener.onError("Sorry, a name is required.");
+            }
+            else
+            {
+                listener.onValidateClick();
+            }
+        }
     }
 
     public String getName()
@@ -187,8 +259,14 @@ public class GenerateContentPopup extends JPanel
         this.listener = listener;
     }
 
+    public void setFocus()
+    {
+        itemType.requestFocus();
+    }
+
     public interface GeneratePopupListener
     {
+        void onError(String error);
         void onCancelClick();
 
         void onValidateClick();

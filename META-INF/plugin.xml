@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin version="5">
     <id>com.jaumard.sails</id>
     <name>Sails/Treeline</name>
     <version>1.0</version>
@@ -6,7 +6,7 @@
 
     <description><![CDATA[
       Simple plugin to generate/manage a <a href="http://www.sailsjs.org">Sails</a> or <a href="http://treeline.io">Treeline</a> project.<br>
-      Right click on api, models, controllers, adapters folder allow to generate files from IDE
+      Right click on api, models, controllers, adapters folder allow to generate files from IDE or use "shift control alt G" or "shift cmd alt G" shortcut
     ]]></description>
 
     <change-notes><![CDATA[
