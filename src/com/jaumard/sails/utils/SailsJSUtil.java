@@ -48,6 +48,35 @@ public class SailsJSUtil
         return field;
     }
 
+    @NotNull
+    public static TextFieldWithHistoryWithBrowseButton createNPMExecutableTextField(@Nullable Project project)
+    {
+        TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
+                project, SailsJSBundle.message("sails.conf.npm.executable.name"),
+                FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>()
+                {
+                    @NotNull
+                    @Override
+                    public List<String> produce()
+                    {
+                        return
+                                getDefaultNpmExecutablePaths();
+                    }
+                });
+
+        String executablePath = SailsJSConfig.getInstance().getNpmExecutable();
+        setDefaultValue(field, executablePath);
+
+        return field;
+    }
+
+    private static List<String> getDefaultNpmExecutablePaths()
+    {
+        List<String> paths = ContainerUtil.newArrayList();
+        ContainerUtil.addIfNotNull(paths, getPath(SailsJSCommandLine.NPM));
+        return paths;
+    }
+
     public static void copyFileFromAssets(InputStream inputStream, String pathToWrite)
     {
         OutputStream outputStream = null;
@@ -102,6 +131,23 @@ public class SailsJSUtil
 
             }
         }
+    }
+
+    public static boolean deleteDir(File dir)
+    {
+        if (dir.isDirectory())
+        {
+            String[] children = dir.list();
+            for (String aChildren : children)
+            {
+                if (!deleteDir(new File(dir, aChildren)))
+                {
+                    return false;
+                }
+            }
+        }
+        // The directory is now empty or this is a file so delete it
+        return dir.delete();
     }
 
     @NotNull

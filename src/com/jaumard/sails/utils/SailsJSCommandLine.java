@@ -27,6 +27,7 @@ public class SailsJSCommandLine
     public static final String GENERATE_CONTROLLER = "controller";
     public static final String GENERATE_ADAPTER = "adapter";
 
+    public static final String NPM = "npm";
     public static final String PLATFORM_SAILS = "sails";
     public static final String PLATFORM_TREELINE = "treeline";
 
@@ -89,20 +90,6 @@ public class SailsJSCommandLine
         executeVoidCommand(command);
     }
 
-    private boolean isSailsJS()
-    {
-        assert myWorkDir != null;
-        Boolean isPhoneGapByName = isSailsJSExecutableByPath(myPath);
-        if (isPhoneGapByName != null)
-        {
-            return isPhoneGapByName;
-        }
-
-        String s = executeAndReturnResult(new String[]{myPath});
-
-        return s.contains(PLATFORM_SAILS);
-    }
-
     /**
      * @param path is path a sails executable
      * @return true - sails / false - not sails / null - cannot detect
@@ -130,24 +117,6 @@ public class SailsJSCommandLine
         }
 
         return null;
-    }
-
-    private boolean isTreeline()
-    {
-        assert myWorkDir != null;
-        File file = new File(myPath);
-        if (file.getName().contains(PLATFORM_TREELINE))
-        {
-            return true;
-        }
-        if (file.getName().contains(PLATFORM_SAILS))
-        {
-            return false;
-        }
-
-        String s = executeAndReturnResult(new String[]{myPath});
-
-        return s.contains(PLATFORM_TREELINE);
     }
 
     private void executeVoidCommand(final String... command)
@@ -253,4 +222,8 @@ public class SailsJSCommandLine
         return output;
     }
 
+    public void npmInstall()
+    {
+        executeVoidCommand(myPath, "install");
+    }
 }

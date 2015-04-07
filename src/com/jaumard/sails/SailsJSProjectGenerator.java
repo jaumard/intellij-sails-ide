@@ -61,8 +61,7 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
     @Override
     public String getDescription()
     {
-        return "<html>This project is an application skeleton for a typical <a href=\"http://www.sailsjs.org\">Sails</a> or <a href=\"http://treeline.io\">Treeline</a> server app.<br>" +
-                "Don't forget to install dependencies by running<pre>npm install</pre></html>";
+        return "<html>This project is an application skeleton for a typical <a href=\"http://www.sailsjs.org\">Sails</a> or <a href=\"http://treeline.io\">Treeline</a> server app.<br></html>";
     }
 
     @Override
@@ -98,11 +97,15 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
                             return;
                         }
                         settings.setName(project.getName());
-                        settings.setPpCSS(SailsJSConfig.getInstance().getDefaultPPCSS());
+
                         commandLine.createNewProject(settings.name());
 
                         if (settings.getPpCSS().equals(SailsJSProjectSettings.PPCSS_SASS))
                         {
+
+                            File nodeFolder = new File(tempProject.getPath() + "/" + baseDir.getName() + "/node_modules/");
+                            SailsJSUtil.deleteDir(nodeFolder);
+
                             File sassFolder = new File(tempProject.getPath() + "/" + baseDir.getName() + "/assets/sass/");
                             sassFolder.mkdirs();
                             File lessFile = new File(tempProject.getPath() + "/" + baseDir.getName() + "/assets/styles/importer.less");
@@ -121,12 +124,34 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
                         }
 
                         File[] array = tempProject.listFiles();
+
                         if (array != null && array.length != 0)
                         {
                             File from = ContainerUtil.getFirstItem(ContainerUtil.newArrayList(array));
                             assert from != null;
-                            FileUtil.copyDir(from, new File(baseDir.getPath()));
+                            FileUtil.copyDir(from, new File(baseDir.getPath()), new FileFilter()
+                            {
+                                @Override
+                                public boolean accept(File pathname)
+                                {
+                                    if (pathname.getName().equals("node_modules"))
+                                    {
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            });
                             deleteTemp(tempProject);
+                            SailsJSCommandLine nodeCommandLine = new SailsJSCommandLine(SailsJSConfig.getInstance().getNpmExecutable(), baseDir.getPath());
+                            try
+                            {
+                                nodeCommandLine.npmInstall();
+                            }
+                            catch (Exception e)
+                            {
+                                LOG.info("npm install fail, need to be done manually");
+                            }
+
                         }
                         else
                         {
@@ -186,7 +211,7 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
             {
                 if (line.contains("grunt-contrib-less"))
                 {
-                    line = "    \"grunt-contrib-sass\"       : \"^0.9.2\",";
+                    line = "    \"grunt-contrib-sass\" : \"^0.9.2\",";
                 }
                 bw.write(line + "\n");
             }
@@ -317,11 +342,22 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
         public static final String PPCSS_SASS = "SASS";
         public static final String PPCSS_LESS = "LESS";
         private String name = "example";
+        private String npmExecutable = null;
         private String ppCSS = null;
         private String executable;
 
         public SailsJSProjectSettings()
         {
+        }
+
+        public String getNpmExecutable()
+        {
+            return npmExecutable;
+        }
+
+        public void setNpmExecutable(String npmExecutable)
+        {
+            this.npmExecutable = npmExecutable;
         }
 
         public void setExecutable(String executable)

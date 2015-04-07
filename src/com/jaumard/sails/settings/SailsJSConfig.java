@@ -20,6 +20,7 @@ public class SailsJSConfig implements PersistentStateComponent<SailsJSConfig>
     public String SAILSJS_PATH = "/usr/local/bin/sails";
     public static String SAILSJS_WORK_DIRECTORY = "sails.js.settings.workdir";
     private String executableOptions;
+    private String npmExecutable = "/usr/local/bin/npm";
     private String defaultPPCSS = SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_SASS;
 
 
@@ -39,6 +40,16 @@ public class SailsJSConfig implements PersistentStateComponent<SailsJSConfig>
     public void loadState(SailsJSConfig state)
     {
         XmlSerializerUtil.copyBean(state, this);
+    }
+
+    public String getNpmExecutable()
+    {
+        return npmExecutable;
+    }
+
+    public void setNpmExecutable(String npmExecutable)
+    {
+        this.npmExecutable = npmExecutable;
     }
 
     public String getExecutablePath()

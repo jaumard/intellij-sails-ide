@@ -27,6 +27,7 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
     private ComboBox ppCSS;
     private final List<WebProjectGenerator.SettingsStateListener> myStateListeners = ContainerUtil.createLockFreeCopyOnWriteList();
     private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
+    private TextFieldWithHistoryWithBrowseButton myNPMExecutablePathField;
 
     private final ConcurrentMap<String, Boolean> myValidateCache = ContainerUtil.newConcurrentMap();
 
@@ -51,7 +52,8 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
     public void buildUI(@NotNull SettingsStep settingsStep)
     {
         setFields();
-        settingsStep.addSettingsField(SailsJSBundle.message("sails.conf.name") + " :", myExecutablePathField);
+        settingsStep.addSettingsField(SailsJSBundle.message("sails.conf.executable.name") + " :", myExecutablePathField);
+        settingsStep.addSettingsField(SailsJSBundle.message("sails.conf.npm.executable.name"), myNPMExecutablePathField);
         settingsStep.addSettingsField(SailsJSBundle.message("sails.conf.ppCSS") + " :", ppCSS);
     }
 
@@ -63,6 +65,7 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
         SailsJSConfig.getInstance().setExecutablePath(myExecutablePathField.getText());
         SailsJSConfig.getInstance().setDefaultPPCSS((String) ppCSS.getSelectedItem());
         settings.setExecutable(myExecutablePathField.getText());
+        settings.setNpmExecutable(myNPMExecutablePathField.getText());
         settings.setPpCSS((String) ppCSS.getSelectedItem());
 
         return settings;
@@ -74,6 +77,10 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
         {
             ppCSS = new ComboBox(new String[]{SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_SASS, SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_LESS});
             ppCSS.setSelectedItem(SailsJSConfig.getInstance().getDefaultPPCSS());
+        }
+        if (myNPMExecutablePathField == null)
+        {
+            myNPMExecutablePathField = SailsJSUtil.createNPMExecutableTextField(null);
         }
         if (myExecutablePathField == null)
         {

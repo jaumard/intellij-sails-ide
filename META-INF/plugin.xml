@@ -1,7 +1,7 @@
-<idea-plugin version="8">
+<idea-plugin version="9">
     <id>com.jaumard.sails</id>
     <name>Sails/Treeline</name>
-    <version>1.3</version>
+    <version>1.4</version>
     <vendor email="jimmy.aumard@gmail.com" url="http://www.sailsjs.org">Jimmy Aumard</vendor>
 
     <description><![CDATA[
@@ -15,6 +15,7 @@
       1.1 -> move template into Node.js and NPM category
       1.2 -> generate a default run configuration
       1.3 -> fix windows project creation, choose SASS or LESS on project creation
+      1.4 -> automatic npm install on project creation
     ]]>
     </change-notes>
 
