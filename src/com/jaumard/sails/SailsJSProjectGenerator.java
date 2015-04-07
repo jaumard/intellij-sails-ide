@@ -1,5 +1,11 @@
 package com.jaumard.sails;
 
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.ide.browsers.StartBrowserSettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.notification.Notification;
@@ -11,15 +17,20 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.jaumard.sails.icons.SailsJSIcons;
 import com.jaumard.sails.settings.SailsJSConfig;
 import com.jaumard.sails.utils.SailsJSCommandLine;
+import com.jetbrains.nodejs.run.NodeJSRunConfiguration;
+import com.jetbrains.nodejs.run.NodeJSRunConfigurationType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -141,16 +152,63 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
         }
     }
 
-    private void createRunConfiguration(Project project, SailsJSProjectSettings settings)
+    private void createRunConfiguration(final Project project, SailsJSProjectSettings settings)
     {
-        /*RunManager.getInstance(project).createRunConfiguration("Run", new ConfigurationFactory()
+        final Ref<VirtualFile> appFileRef = Ref.create();
+
+        final VirtualFile baseDir = project.getBaseDir();
+
+        final String name = "Launch server";
+        ApplicationManager.getApplication().runReadAction(new Runnable()
         {
             @Override
-            public RunConfiguration createTemplateConfiguration(Project project)
+            public void run()
             {
-                return null;
+                RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
+                for (RunConfiguration configuration : runManager.getAllConfigurationsList())
+                {
+                    if (name.equals(configuration.getName()))
+                    {
+                        return;
+                    }
+                }
+                appFileRef.set(VfsUtil.findRelativeFile(baseDir, "app.js"));
             }
-        });*/
+        });
+        if (appFileRef.isNull())
+        {
+            return;
+        }
+        ApplicationManager.getApplication().runWriteAction(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ConfigurationFactory configurationFactory = NodeJSRunConfigurationType.getInstance().getDefaultConfigurationFactory();
+                RunnerAndConfigurationSettings rac = RunManager.getInstance(project).createRunConfiguration("", configurationFactory);
+                NodeJSRunConfiguration runConfig = ObjectUtils.tryCast(rac.getConfiguration(), NodeJSRunConfiguration.class);
+                if (runConfig == null)
+                {
+                    return;
+                }
+                VirtualFile appFile = appFileRef.get();
+
+                runConfig.setName(name);
+                runConfig.setWorkingDirectory(baseDir.getPath());
+                runConfig.setInputPath(VfsUtilCore.getRelativePath(appFile, baseDir, File.separatorChar));
+                //runConfig.getEnvs().put("DEBUG", baseDir.getName() + ":*");
+
+                StartBrowserSettings browserSettings = new StartBrowserSettings();
+                browserSettings.setUrl("http://localhost:1337/");
+                runConfig.setStartBrowserSettings(browserSettings);
+
+                RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
+                runManager.addConfiguration(rac, true);
+                runManager.setSelectedConfiguration(rac);
+
+
+            }
+        });
     }
 
     protected File createTemp() throws IOException
