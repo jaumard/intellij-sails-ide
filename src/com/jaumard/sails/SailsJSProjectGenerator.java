@@ -26,16 +26,17 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.jaumard.sails.bundle.SailsJSBundle;
 import com.jaumard.sails.icons.SailsJSIcons;
 import com.jaumard.sails.settings.SailsJSConfig;
 import com.jaumard.sails.utils.SailsJSCommandLine;
+import com.jaumard.sails.utils.SailsJSUtil;
 import com.jetbrains.nodejs.run.NodeJSRunConfiguration;
 import com.jetbrains.nodejs.run.NodeJSRunConfigurationType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by jaumard on 04/04/2015.
@@ -54,7 +55,7 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
     @Override
     public String getName()
     {
-        return "Sails/Treeline";
+        return SailsJSBundle.message("sails.conf.name");
     }
 
     @Override
@@ -97,7 +98,27 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
                             return;
                         }
                         settings.setName(project.getName());
+                        settings.setPpCSS(SailsJSConfig.getInstance().getDefaultPPCSS());
                         commandLine.createNewProject(settings.name());
+
+                        if (settings.getPpCSS().equals(SailsJSProjectSettings.PPCSS_SASS))
+                        {
+                            File sassFolder = new File(tempProject.getPath() + "/" + baseDir.getName() + "/assets/sass/");
+                            sassFolder.mkdirs();
+                            File lessFile = new File(tempProject.getPath() + "/" + baseDir.getName() + "/assets/styles/importer.less");
+                            if (lessFile.exists())
+                            {
+                                lessFile.delete();
+                            }
+
+                            InputStream sassFile = getClass().getResourceAsStream("/js/sass.js");
+                            SailsJSUtil.copyFileFromAssets(sassFile, tempProject.getPath() + "/" + baseDir.getName() + "/tasks/config/sass.js");
+                            InputStream cAssetFile = getClass().getResourceAsStream("/js/compileAssets.js");
+                            SailsJSUtil.copyFileFromAssets(cAssetFile, tempProject.getPath() + "/" + baseDir.getName() + "/tasks/register/compileAssets.js");
+                            InputStream sAssetFile = getClass().getResourceAsStream("/js/syncAssets.js");
+                            SailsJSUtil.copyFileFromAssets(sAssetFile, tempProject.getPath() + "/" + baseDir.getName() + "/tasks/register/syncAssets.js");
+                            modifyPackage(tempProject.getPath() + "/" + baseDir.getName() + "/package.json");
+                        }
 
                         File[] array = tempProject.listFiles();
                         if (array != null && array.length != 0)
@@ -150,6 +171,62 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
         {
             showErrorMessage(e.getMessage());
         }
+    }
+
+    private void modifyPackage(String path)
+    {
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try
+        {
+            br = new BufferedReader(new FileReader(path));
+            bw = new BufferedWriter(new FileWriter(path + ".tmp"));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                if (line.contains("grunt-contrib-less"))
+                {
+                    line = "    \"grunt-contrib-sass\"       : \"^0.9.2\",";
+                }
+                bw.write(line + "\n");
+            }
+        }
+        catch (Exception e)
+        {
+            return;
+        }
+        finally
+        {
+            try
+            {
+                if (br != null)
+                {
+                    br.close();
+                }
+            }
+            catch (IOException e)
+            {
+                //
+            }
+            try
+            {
+                if (bw != null)
+                {
+                    bw.close();
+                }
+            }
+            catch (IOException e)
+            {
+                //
+            }
+        }
+        // Once everything is complete, delete old file..
+        File oldFile = new File(path);
+        oldFile.delete();
+
+        // And rename tmp file's name to old file name
+        File newFile = new File(path + ".tmp");
+        newFile.renameTo(oldFile);
     }
 
     private void createRunConfiguration(final Project project, SailsJSProjectSettings settings)
@@ -237,7 +314,10 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
 
     static public class SailsJSProjectSettings
     {
+        public static final String PPCSS_SASS = "SASS";
+        public static final String PPCSS_LESS = "LESS";
         private String name = "example";
+        private String ppCSS = null;
         private String executable;
 
         public SailsJSProjectSettings()
@@ -262,6 +342,16 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
         public void setName(String name)
         {
             this.name = name;
+        }
+
+        public String getPpCSS()
+        {
+            return ppCSS;
+        }
+
+        public void setPpCSS(String ppCSS)
+        {
+            this.ppCSS = ppCSS;
         }
     }
 

@@ -2,6 +2,7 @@ package com.jaumard.sails.settings;
 
 import com.intellij.openapi.components.*;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.jaumard.sails.SailsJSProjectGenerator;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -19,6 +20,7 @@ public class SailsJSConfig implements PersistentStateComponent<SailsJSConfig>
     public String SAILSJS_PATH = "/usr/local/bin/sails";
     public static String SAILSJS_WORK_DIRECTORY = "sails.js.settings.workdir";
     private String executableOptions;
+    private String defaultPPCSS = SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_SASS;
 
 
     public static SailsJSConfig getInstance()
@@ -58,5 +60,15 @@ public class SailsJSConfig implements PersistentStateComponent<SailsJSConfig>
     public String getExecutableOptions()
     {
         return executableOptions;
+    }
+
+    public void setDefaultPPCSS(String defaultPPCSS)
+    {
+        this.defaultPPCSS = defaultPPCSS;
+    }
+
+    public String getDefaultPPCSS()
+    {
+        return defaultPPCSS;
     }
 }

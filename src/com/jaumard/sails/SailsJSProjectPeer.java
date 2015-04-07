@@ -1,13 +1,14 @@
 package com.jaumard.sails;
 
 import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
-import com.intellij.util.ui.JBUI;
+import com.jaumard.sails.bundle.SailsJSBundle;
 import com.jaumard.sails.settings.SailsJSConfig;
 import com.jaumard.sails.utils.SailsJSCommandLine;
 import com.jaumard.sails.utils.SailsJSUtil;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<SailsJSProjectGenerator.SailsJSProjectSettings>
 {
-
+    private ComboBox ppCSS;
     private final List<WebProjectGenerator.SettingsStateListener> myStateListeners = ContainerUtil.createLockFreeCopyOnWriteList();
     private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
 
@@ -39,10 +40,10 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
     {
         setFields();
         JPanel panel = FormBuilder.createFormBuilder()
-                .addLabeledComponent("Sails/Treeline :", myExecutablePathField)
+                .addLabeledComponent(SailsJSBundle.message("sails.conf.name") + " :", myExecutablePathField)
+                .addLabeledComponent(SailsJSBundle.message("sails.conf.ppCSS") + " :", ppCSS)
                 .getPanel();
 
-        panel.setPreferredSize(JBUI.size(600, 40));
         return panel;
     }
 
@@ -50,7 +51,8 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
     public void buildUI(@NotNull SettingsStep settingsStep)
     {
         setFields();
-        settingsStep.addSettingsField("Sails/Treeline :", myExecutablePathField);
+        settingsStep.addSettingsField(SailsJSBundle.message("sails.conf.name") + " :", myExecutablePathField);
+        settingsStep.addSettingsField(SailsJSBundle.message("sails.conf.ppCSS") + " :", ppCSS);
     }
 
     @NotNull
@@ -59,14 +61,24 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
     {
         SailsJSProjectGenerator.SailsJSProjectSettings settings = new SailsJSProjectGenerator.SailsJSProjectSettings();
         SailsJSConfig.getInstance().setExecutablePath(myExecutablePathField.getText());
+        SailsJSConfig.getInstance().setDefaultPPCSS((String) ppCSS.getSelectedItem());
         settings.setExecutable(myExecutablePathField.getText());
+        settings.setPpCSS((String) ppCSS.getSelectedItem());
 
         return settings;
     }
 
     private void setFields()
     {
-        myExecutablePathField = SailsJSUtil.createSailsJSExecutableTextField(null);
+        if (ppCSS == null)
+        {
+            ppCSS = new ComboBox(new String[]{SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_SASS, SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_LESS});
+            ppCSS.setSelectedItem(SailsJSConfig.getInstance().getDefaultPPCSS());
+        }
+        if (myExecutablePathField == null)
+        {
+            myExecutablePathField = SailsJSUtil.createSailsJSExecutableTextField(null);
+        }
     }
 
     @Nullable
@@ -99,7 +111,7 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
             }
             myValidateCache.put(path, error);
         }
-        return error ? new ValidationInfo("Incorrect Sails executable") : null;
+        return error ? new ValidationInfo("Incorrect Sails/Treeline executable") : null;
     }
 
     @Override
