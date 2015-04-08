@@ -18,6 +18,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -102,10 +103,6 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
 
                         if (settings.getPpCSS().equals(SailsJSProjectSettings.PPCSS_SASS))
                         {
-
-                            File nodeFolder = new File(tempProject.getPath() + "/" + baseDir.getName() + "/node_modules/");
-                            SailsJSUtil.deleteDir(nodeFolder);
-
                             File sassFolder = new File(tempProject.getPath() + "/" + baseDir.getName() + "/assets/sass/");
                             sassFolder.mkdirs();
                             File lessFile = new File(tempProject.getPath() + "/" + baseDir.getName() + "/assets/styles/importer.less");
@@ -320,13 +317,16 @@ public class SailsJSProjectGenerator extends WebProjectTemplate<SailsJSProjectGe
 
     protected void deleteTemp(File tempProject)
     {
-        if (!FileUtil.delete(tempProject))
+        if (!SystemInfo.isWindows)//FIXME On windows, delete temp dir break sails installation !!
         {
-            LOG.warn("Cannot delete " + tempProject);
-        }
-        else
-        {
-            LOG.info("Successfully deleted " + tempProject);
+            if (!SailsJSUtil.deleteDir(tempProject))
+            {
+                LOG.warn("Cannot delete " + tempProject);
+            }
+            else
+            {
+                LOG.info("Successfully deleted " + tempProject);
+            }
         }
     }
 

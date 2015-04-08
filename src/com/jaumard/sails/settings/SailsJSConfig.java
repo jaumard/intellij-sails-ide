@@ -18,9 +18,11 @@ import org.jetbrains.annotations.Nullable;
 public class SailsJSConfig implements PersistentStateComponent<SailsJSConfig>
 {
     public String SAILSJS_PATH = "/usr/local/bin/sails";
+    public String NPM_PATH = "/usr/local/bin/npm";
     public static String SAILSJS_WORK_DIRECTORY = "sails.js.settings.workdir";
     private String executableOptions;
-    private String npmExecutable = "/usr/local/bin/npm";
+    private String npmExecutable = null;
+    private String executable = null;
     private String defaultPPCSS = SailsJSProjectGenerator.SailsJSProjectSettings.PPCSS_SASS;
 
 
@@ -55,12 +57,12 @@ public class SailsJSConfig implements PersistentStateComponent<SailsJSConfig>
     public String getExecutablePath()
     {
 
-        return SAILSJS_PATH;
+        return executable;
     }
 
     public void setExecutablePath(String path)
     {
-        SAILSJS_PATH = path;
+        executable = path;
     }
 
     public void setExecutableOptions(String executableOptions)

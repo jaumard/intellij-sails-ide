@@ -29,6 +29,7 @@ public class SailsJSUtil
     @NotNull
     public static TextFieldWithHistoryWithBrowseButton createSailsJSExecutableTextField(@Nullable Project project)
     {
+        final List<String> defaultExecutablePaths = getDefaultExecutablePaths();
         TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
                 project, SailsJSBundle.message("sails.conf.executable.name"),
                 FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>()
@@ -38,12 +39,19 @@ public class SailsJSUtil
                     public List<String> produce()
                     {
                         return
-                                getDefaultExecutablePaths();
+                                defaultExecutablePaths;
                     }
                 });
 
         String executablePath = SailsJSConfig.getInstance().getExecutablePath();
-        setDefaultValue(field, executablePath);
+        if (executablePath == null && defaultExecutablePaths.size() > 0)
+        {
+            setDefaultValue(field, defaultExecutablePaths.get(0));
+        }
+        else
+        {
+            setDefaultValue(field, executablePath);
+        }
 
         return field;
     }
@@ -51,6 +59,7 @@ public class SailsJSUtil
     @NotNull
     public static TextFieldWithHistoryWithBrowseButton createNPMExecutableTextField(@Nullable Project project)
     {
+        final List<String> defaultNpmExecutablePaths = getDefaultNpmExecutablePaths();
         TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
                 project, SailsJSBundle.message("sails.conf.npm.executable.name"),
                 FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>()
@@ -60,12 +69,19 @@ public class SailsJSUtil
                     public List<String> produce()
                     {
                         return
-                                getDefaultNpmExecutablePaths();
+                                defaultNpmExecutablePaths;
                     }
                 });
 
         String executablePath = SailsJSConfig.getInstance().getNpmExecutable();
-        setDefaultValue(field, executablePath);
+        if (executablePath == null && defaultNpmExecutablePaths.size() > 0)
+        {
+            setDefaultValue(field, defaultNpmExecutablePaths.get(0));
+        }
+        else
+        {
+            setDefaultValue(field, executablePath);
+        }
 
         return field;
     }
@@ -145,6 +161,7 @@ public class SailsJSUtil
                     return false;
                 }
             }
+
         }
         // The directory is now empty or this is a file so delete it
         return dir.delete();
@@ -187,11 +204,19 @@ public class SailsJSUtil
         {
             setTextFieldWithHistory(textFieldWithHistory, defaultValue);
         }
+
     }
 
     public static void setTextFieldWithHistory(TextFieldWithHistory textFieldWithHistory, String value)
     {
-        if (null != value)
+        if (null == value)
+        {
+            if (textFieldWithHistory.getHistory().size() > 0)
+            {
+                textFieldWithHistory.setSelectedItem(textFieldWithHistory.getHistory().get(0));
+            }
+        }
+        else
         {
             textFieldWithHistory.setText(value);
             textFieldWithHistory.addCurrentTextToHistory();

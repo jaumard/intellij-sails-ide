@@ -42,6 +42,7 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
         setFields();
         JPanel panel = FormBuilder.createFormBuilder()
                 .addLabeledComponent(SailsJSBundle.message("sails.conf.name") + " :", myExecutablePathField)
+                .addLabeledComponent(SailsJSBundle.message("sails.conf.npm.executable.name") + " :", myNPMExecutablePathField)
                 .addLabeledComponent(SailsJSBundle.message("sails.conf.ppCSS") + " :", ppCSS)
                 .getPanel();
 
@@ -64,6 +65,7 @@ public class SailsJSProjectPeer implements WebProjectGenerator.GeneratorPeer<Sai
         SailsJSProjectGenerator.SailsJSProjectSettings settings = new SailsJSProjectGenerator.SailsJSProjectSettings();
         SailsJSConfig.getInstance().setExecutablePath(myExecutablePathField.getText());
         SailsJSConfig.getInstance().setDefaultPPCSS((String) ppCSS.getSelectedItem());
+        SailsJSConfig.getInstance().setNpmExecutable(myNPMExecutablePathField.getText());
         settings.setExecutable(myExecutablePathField.getText());
         settings.setNpmExecutable(myNPMExecutablePathField.getText());
         settings.setPpCSS((String) ppCSS.getSelectedItem());
