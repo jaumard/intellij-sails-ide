@@ -5,14 +5,14 @@
     <vendor email="jimmy.aumard@gmail.com" url="http://www.sailsjs.org">Jimmy Aumard</vendor>
 
     <description><![CDATA[
-    <h4><a href="http://www.sailsjs.org" target="_blank">Sails</a> or <a href="http://treeline.io" target="_blank">Treeline</a> integration for InteliJ Platform.<h4>
-        <p>* Sails/Treeline Project wizard</p>
-        <p>* Run Sails/Treeline application from IntelliJ toolbar</p>
-        <p>* Generate project with SASS or LESS preprocessor</p>
-        <p>* Generate API from IDE</p>
-        <p>* Generate Models from IDE</p>
-        <p>* Generate Controllers from IDE</p>
-        <p>* Generate Adapters from IDE</p>
+    <h4><a href="http://www.sailsjs.org" target="_blank">Sails</a> or <a href="http://treeline.io" target="_blank">Treeline</a> integration for InteliJ Platform.<h4><br/><br/>
+        * Sails/Treeline Project wizard<br/>
+        * Run Sails/Treeline application from IntelliJ toolbar<br/>
+        * Generate project with SASS or LESS preprocessor<br/>
+        * Generate API from IDE<br/>
+        * Generate Models from IDE<br/>
+        * Generate Controllers from IDE<br/>
+        * Generate Adapters from IDE<br/><br/>
 
       Right click on api, models, controllers, adapters folder to generate files from IDE or use "shift control alt G" or "shift cmd alt G" shortcut<br>
 
