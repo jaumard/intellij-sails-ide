@@ -1,6 +1,8 @@
 # intellij-sails-ide
 IntelliJ plugin for Sails and Treeline integration
 
+DEPRECATED: I'm not using Sails anymore, if someone want to retrieve this repo, feel free to do it :) I can give you access to it if you want. 
+
 ## Sails or Treeline integration for InteliJ Platform
 * Sails/Treeline Project wizard
 * Run Sails/Treeline application from IntelliJ toolbar
